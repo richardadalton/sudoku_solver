@@ -1,8 +1,13 @@
 
+def load_grid(file):
+    with open(file) as f:
+        text = f.read().upper().split("\n")
+    text = "".join(text).replace(" ", "")
+    return {(r, c): text[r * 9 + c] for r in range(9) for c in range(9)}
+
 def text_to_grid(str):
     str = str.replace(" ", "")
     return {(r, c): str[r * 9 + c] for r in range(9) for c in range(9)}
-
 
 def same_row(grid, pos):
     row, col = pos

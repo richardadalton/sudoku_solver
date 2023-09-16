@@ -1,10 +1,18 @@
+import argparse
 from display import draw_grid
-from utils import text_to_grid, get_moves
+from utils import text_to_grid, get_moves, load_grid
 
-# start = "746931258 923584.1. .1.....93   .89.1...6 ....47... 675...1.2   ..1.72... .5..6.8.4 26.8.3..."
-start = "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."
-# start = "9.....1..64..9...51.7...43....3.5....79..6.8..6.1...23..28.3...8....7.16...5.2.4."
-# start = "................................................................................."
+def get_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file", default="words.txt",
+                        help="Path to file containing unsolved sudoku puzzle")
+    parser.add_argument("-u", "--unsolved", action="store_true",
+                        help="Display the unsolved grid")
+    parser.add_argument("-s", "--solved", action="store_true",
+                        help="Display the solved grid")
+
+    args = parser.parse_args()
+    return args
 
 def solve(grid):
 
@@ -19,7 +27,6 @@ def solve(grid):
         else:
             last_moves = moves
 
-        print("Moves", len(moves))
         if len(moves) == 0:
             solved = True
 
@@ -31,9 +38,15 @@ def solve(grid):
     return grid
 
 def main():
-    grid = text_to_grid(start)
-    print(draw_grid(grid))
+    args = get_arguments()
+    grid = load_grid(args.file)
+
+    if args.unsolved:
+        print(draw_grid(grid))
+
     grid = solve(grid)
-    print(draw_grid(grid))
+
+    if args.solved:
+        print(draw_grid(grid))
 
 main()

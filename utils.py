@@ -5,9 +5,9 @@ def load_grid(file):
     text = "".join(text).replace(" ", "")
     return {(r, c): text[r * 9 + c] for r in range(9) for c in range(9)}
 
-def text_to_grid(str):
-    str = str.replace(" ", "")
-    return {(r, c): str[r * 9 + c] for r in range(9) for c in range(9)}
+def text_to_grid(s):
+    s = s.replace(" ", "")
+    return {(r, c): s[r * 9 + c] for r in range(9) for c in range(9)}
 
 def same_row(grid, pos):
     row, col = pos
@@ -31,12 +31,12 @@ def same_square(grid, pos):
                                    if grid[r, c] != "."])
 
 def possible_values(grid, pos):
-    all = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+    values = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
     on_row = same_row(grid, pos)
     on_col = same_col(grid, pos)
     in_square = same_square(grid, pos)
     taken = on_row.union(on_col).union(in_square)
-    return all.difference(taken)
+    return values.difference(taken)
 
 def get_moves(grid):
     moves = {}

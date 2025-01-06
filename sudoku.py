@@ -1,10 +1,10 @@
 import argparse
 from display import draw_grid
-from utils import text_to_grid, get_moves, load_grid
+from utils import get_moves, load_grid
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--file", default="words.txt",
+    parser.add_argument("-f", "--file", default="sudoku.txt",
                         help="Path to file containing unsolved sudoku puzzle")
     parser.add_argument("-u", "--unsolved", action="store_true",
                         help="Display the unsolved grid")
@@ -15,7 +15,6 @@ def get_arguments():
     return args
 
 def solve(grid):
-
     solved = False
     last_moves = -1
 

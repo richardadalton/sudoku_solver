@@ -6,7 +6,7 @@ from utils import load_grid, possible_values
 def get_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", default="sudoku.txt",
-                        help="Path to file containing unsolved sudoku puzzle")
+                        help="Path to puzzle file")
     parser.add_argument("-u", "--unsolved", action="store_true",
                         help="Display the unsolved grid")
     parser.add_argument("-s", "--solved", action="store_true",
@@ -15,7 +15,6 @@ def get_arguments():
 
 
 def _propagate(grid):
-    """Fill in any cell that has exactly one possible value, repeatedly."""
     changed = True
     while changed:
         changed = False
@@ -29,22 +28,20 @@ def _propagate(grid):
 
 
 def _backtrack(grid):
-    """Pick the most constrained empty cell and try each candidate."""
     best_pos, best_vals = None, None
     for pos in grid:
         if grid[pos] == ".":
             vals = possible_values(grid, pos)
-            if len(vals) == 0:
-                return None  # contradiction
+            if not vals:
+                return None
             if best_vals is None or len(vals) < len(best_vals):
                 best_pos, best_vals = pos, vals
 
     if best_pos is None:
-        return grid  # all cells filled
+        return grid
 
     for val in best_vals:
-        candidate = _propagate({**grid, best_pos: val})
-        result = _backtrack(candidate)
+        result = _backtrack(_propagate({**grid, best_pos: val}))
         if result is not None:
             return result
 

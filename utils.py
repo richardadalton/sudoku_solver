@@ -1,48 +1,33 @@
-
 def load_grid(file):
     with open(file) as f:
         text = f.read().upper().split("\n")
     text = "".join(text).replace(" ", "")
     return {(r, c): text[r * 9 + c] for r in range(9) for c in range(9)}
 
+
 def text_to_grid(s):
-    s = s.replace(" ", "")
+    s = "".join(s.upper().split())
     return {(r, c): s[r * 9 + c] for r in range(9) for c in range(9)}
 
+
 def same_row(grid, pos):
-    row, col = pos
-    return set([grid[row, c] for c in range(9) if grid[row, c] != "0"])
+    row, _ = pos
+    return {grid[row, c] for c in range(9) if grid[row, c] != "."}
+
 
 def same_col(grid, pos):
-    row, col = pos
-    return set([grid[r, col] for r in range(9) if grid[r, col] != "0"])
+    _, col = pos
+    return {grid[r, col] for r in range(9) if grid[r, col] != "."}
 
-def same_square(grid, pos):
-    def square_range(n):
-        lower = (n // 3) * 3
-        upper = lower + 3
-        return range(lower, upper)
 
+def same_box(grid, pos):
     row, col = pos
-    row_range = square_range(row)
-    col_range = square_range(col)
-    return set([grid[r, c] for r in row_range
-                               for c in col_range
-                                   if grid[r, c] != "."])
+    r0, c0 = (row // 3) * 3, (col // 3) * 3
+    return {grid[r, c] for r in range(r0, r0 + 3)
+                        for c in range(c0, c0 + 3)
+                        if grid[r, c] != "."}
+
 
 def possible_values(grid, pos):
-    values = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
-    on_row = same_row(grid, pos)
-    on_col = same_col(grid, pos)
-    in_square = same_square(grid, pos)
-    taken = on_row.union(on_col).union(in_square)
-    return values.difference(taken)
-
-def get_moves(grid):
-    moves = {}
-    for position in grid:
-        if grid[position] == ".":
-            possible = possible_values(grid, position)
-            if len(possible) > 0:
-                moves[position] = possible
-    return moves
+    taken = same_row(grid, pos) | same_col(grid, pos) | same_box(grid, pos)
+    return {"1", "2", "3", "4", "5", "6", "7", "8", "9"} - taken

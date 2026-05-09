@@ -11,7 +11,7 @@
         <h1>Sudoku Solver</h1>
 
         {% if not solved and result %}
-            <p class="error">This puzzle can't be solved with the current logic — it may require backtracking.</p>
+            <p class="error">This puzzle has no solution.</p>
         {% endif %}
 
         <form method="POST" action="/solve">

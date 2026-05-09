@@ -1,6 +1,7 @@
 import argparse
 from display import draw_grid
-from utils import get_moves, load_grid
+from utils import load_grid, possible_values
+
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -10,31 +11,54 @@ def get_arguments():
                         help="Display the unsolved grid")
     parser.add_argument("-s", "--solved", action="store_true",
                         help="Display the solved grid")
+    return parser.parse_args()
 
-    args = parser.parse_args()
-    return args
+
+def _propagate(grid):
+    """Fill in any cell that has exactly one possible value, repeatedly."""
+    changed = True
+    while changed:
+        changed = False
+        for pos in grid:
+            if grid[pos] == ".":
+                vals = possible_values(grid, pos)
+                if len(vals) == 1:
+                    grid[pos] = vals.pop()
+                    changed = True
+    return grid
+
+
+def _backtrack(grid):
+    """Pick the most constrained empty cell and try each candidate."""
+    best_pos, best_vals = None, None
+    for pos in grid:
+        if grid[pos] == ".":
+            vals = possible_values(grid, pos)
+            if len(vals) == 0:
+                return None  # contradiction
+            if best_vals is None or len(vals) < len(best_vals):
+                best_pos, best_vals = pos, vals
+
+    if best_pos is None:
+        return grid  # all cells filled
+
+    for val in best_vals:
+        candidate = _propagate({**grid, best_pos: val})
+        result = _backtrack(candidate)
+        if result is not None:
+            return result
+
+    return None
+
 
 def solve(grid):
-    solved = False
-    last_moves = -1
-
-    while not solved:
-        moves = get_moves(grid)
-        if moves == last_moves:
-            print("Can't solve")
-            break
-        else:
-            last_moves = moves
-
-        if len(moves) == 0:
-            solved = True
-
-        for pos, vals in moves.items():
-            if len(vals) == 1:
-                value = vals.pop()
-                grid[pos] = value
-
+    grid = _propagate(dict(grid))
+    if any(v == "." for v in grid.values()):
+        result = _backtrack(grid)
+        if result is not None:
+            return result
     return grid
+
 
 def main():
     args = get_arguments()
@@ -45,7 +69,12 @@ def main():
 
     grid = solve(grid)
 
+    if any(v == "." for v in grid.values()):
+        print("Can't solve")
+
     if args.solved:
         print(draw_grid(grid))
 
-main()
+
+if __name__ == "__main__":
+    main()

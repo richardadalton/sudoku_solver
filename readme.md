@@ -1,39 +1,51 @@
 # Sudoku Solver
 
-## Overview
-Takes a string representation of an unsolved sudoku grid, and solves it.
+Solves sudoku puzzles using constraint propagation with backtracking. Available as both a CLI tool and a Flask web app.
 
-## Implementation
-The simple python implementation (sudoku.py) repeatedly iterates over the boards attempting to find squares that can only have one possible value based on the rules of Sudoku. Each time it updates the board with a value, it iterates again.
+## How it works
 
-There is an unfinished alternative solution that uses recursion (sudoku_recursive.py)
+The solver first fills in any cell that has only one possible value (constraint propagation), then falls back to recursive backtracking with a minimum-remaining-values heuristic for harder puzzles that require guessing.
 
 ## Installation
 
-Just clone this repository
-
 ```bash
-$ git clone https://github.com/richardadalton/sudoku_solver.git
+git clone https://github.com/richardadalton/sudoku_solver.git
+cd sudoku_solver
+pip install -r requirements.txt
 ```
 
-## Running Sudoku Solver
+## CLI usage
 
 ```bash
-$ python sudoku.py [-h] [-f FILE] [-u] [-s]
+python sudoku.py [-h] [-f FILE] [-u] [-s]
 
 arguments:
   -h, --help            show this help message and exit
-  -f FILE, --file FILE  Path to file containing unsolved sudoku puzzle
+  -f FILE, --file FILE  Path to puzzle file (default: sudoku.txt)
   -u, --unsolved        Display the unsolved grid
   -s, --solved          Display the solved grid
 ```
 
-## Puzzle File Format
-Unsolved puzzles can be represented as text files using the following format.
-White space is ignored so text can be arranged to match a grid layout.
-Blank squares are represented by dots ('.').
+Example:
 
-```text
+```bash
+python sudoku.py -f sudoku.txt -u -s
+```
+
+## Web app
+
+```bash
+python app.py
+```
+
+Then open `http://127.0.0.1:5001` in your browser. Enter a puzzle and click **Solve**.
+
+## Puzzle file format
+
+White space and blank lines are ignored, so puzzles can be laid out as a grid.
+Empty cells are represented by dots (`.`).
+
+```
 ..3 .2. 6..
 9.. 3.5 ..1
 ..1 8.6 4..

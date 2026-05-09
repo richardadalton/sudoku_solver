@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Solver</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <main>
+        <h1>Sudoku Solver</h1>
+
+        {% if not solved and result %}
+            <p class="error">This puzzle can't be solved with the current logic — it may require backtracking.</p>
+        {% endif %}
+
+        <form method="POST" action="/solve">
+            <table class="sudoku-grid">
+                {% for r in range(9) %}
+                <tr>
+                    {% for c in range(9) %}
+                    {% set pos = (r, c) %}
+                    <td class="
+                        {% if c % 3 == 2 and c != 8 %}box-right{% endif %}
+                        {% if r % 3 == 2 and r != 8 %}box-bottom{% endif %}
+                    ">
+                        {% if result %}
+                            {% set orig_val = original[r][c] %}
+                            {% set solved_val = result[r][c] %}
+                            {% if orig_val != '.' %}
+                                <span class="clue">{{ orig_val }}</span>
+                            {% elif solved_val != '.' %}
+                                <span class="filled">{{ solved_val }}</span>
+                            {% else %}
+                                <span class="unsolved">?</span>
+                            {% endif %}
+                        {% else %}
+                            <input
+                                type="text"
+                                name="cell_{{ r }}_{{ c }}"
+                                maxlength="1"
+                                pattern="[1-9]"
+                                autocomplete="off"
+                            >
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+
+            {% if not result %}
+                <div class="actions">
+                    <button type="submit">Solve</button>
+                    <button type="reset">Clear</button>
+                </div>
+            {% endif %}
+        </form>
+
+        {% if result %}
+            <div class="actions">
+                <a href="/" class="button">New Puzzle</a>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>
